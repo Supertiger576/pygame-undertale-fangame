@@ -19,7 +19,7 @@ taketwo2 = False
 previoushp = 99
 firstime = False
 doattack1p2 = False
-holdup = False
+holdup = False 
 doattack1 = False
 first_menu_movement = 0
 second_menu_movement = False
@@ -61,7 +61,7 @@ button_width = 100
 button_height = 40
 player_rect = pygame.Rect(screen_width // 2, screen_height // 2, player_size, player_size)
 
-player_image = pygame.image.load(r"soul.png").convert_alpha()
+player_image = pygame.image.load(r"soul.gif").convert_alpha()
 player_image = pygame.transform.scale(player_image, (player_size, player_size))
 player_visible = True
 
@@ -269,7 +269,7 @@ HP_bar_x = screen_width * 0.463
 HP_bar_y = screen_height * 0.81
 HP_bar_color = (255, 255, 0)  # yellow
 damagedalr = False
-
+rotate = 0
 
 soul_menu_positions = [
     (FIGHT_RECT.x - player_size + 22, FIGHT_RECT.y + (button_height - player_size) // 2),
@@ -279,7 +279,7 @@ soul_menu_positions = [
 ]
 player_rect.topleft = soul_menu_positions[0]  # This puts it at FIGHT at the start
 async def main():
-    global check_timer, sparefail_timer, missed_timer, bar_keep_timer
+    global ATTACK1_visible, rotate, check_timer, sparefail_timer, missed_timer, bar_keep_timer
     global ACT1_image, ACT1_visible, ACT2_image, ACT2_visible, ACT_RECT, ACT_menu_visible, ACT1_visible, ACT2_visible, ACT_menu_visible
     global ATTACK0_RECT, ATTACK0_image, ATTACK0_visible, ATTACK1_image, ATTACK10_RECT, ATTACK10_visible, ATTACK11_RECT, ATTACK11_visible
     global ATTACK12_RECT, ATTACK12_visible, ATTACK13_RECT, ATTACK13_visible, ATTACK14_RECT, ATTACK14_visible, ATTACK15_RECT, ATTACK15_visible
@@ -1313,14 +1313,39 @@ async def main():
                         ATTACK9_RECT.x += 9
                 if anothernextmove and ATTACK_RECT.x > BATTLEBOX_RECT.right + 200:
                     menurestart = True
-
-            elif attacknumber == 5:
+                    
+            elif attacknumber == 6:
                 screen.fill((0, 0, 0))  # black background
                 done_surface = font.render("You win! Thank you for playing this small demo.  Keep an eye out for when the game is finished!", True, (255, 255, 255)) 
                 done_rect = done_surface.get_rect(center=screen.get_rect().center) 
                 screen.blit(done_surface, done_rect)
                 soul_free_move = False
+            elif attacknumber == 5:
+                ATTACK1_visible = True
+                ATTACK_visible = True
+                ATTACK_RECT.center = BATTLEBOX_RECT.center
+                if not firstime:
+                    player_rect.bottomleft = BATTLEBOX_RECT.topleft
+                    firstime = True
+                now = pygame.time.get_ticks()
+                if now - attack_start_time > 800:
+                    rotate += 3
 
+                ATTACK05_image = pygame.transform.scale(ATTACK_image, (112, 272))
+
+                ATTACK1_image = pygame.transform.rotate(ATTACK05_image, int(rotate))
+
+                ATTACK_RECT = ATTACK1_image.get_rect(center=ATTACK_RECT.center)
+
+
+                # Get the rectangle for positioning
+                if now - attack_start_time > 20200:
+                    menurestart = True
+                    ATTACK_RECT.x += 500
+                    ATTACK_visible = False
+
+
+                
             ATTACK_masks = [pygame.mask.from_surface(img) for img in ATTACK_images]
             BLUEATTACK_masks = [pygame.mask.from_surface(img) for img in BLUEATTACK_images]
             ORANGEATTACK_masks = [pygame.mask.from_surface(img) for img in ORANGEATTACK_images]
